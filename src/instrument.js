@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import InstrumentAudio from "./src/instrumentAudio";
 import getNotesBetween from "./src/getNotesBetween";
 import isAccidentalNote from "./src/isAccidentalNote";
@@ -30,6 +30,34 @@ const Instrument = ({
             )
         })
     }
+
+    useEffect(() => {
+      window.addEventListener("keydown", handleKeyDown);
+      window.addEventListener("keyup", handleKeyUp);
+    }, []);
+
+    const handleKeyDown = e => {
+      if (isRegularKey(e) && !e.repeat) {
+        const note = getNoteFromKeyboardKey(e.key);
+        if (note) {
+          setState({ ...state, notesPlaying: [...state.notesPlaying, note] });
+        }
+      }
+    };
+
+    const handleKeyUp = e => {
+      if (isRegularKey(e) && !e.repeat) {
+        const note = getNoteFromKeyboardKey(e.key);
+        if (note) {
+          setState({
+            ...state,
+            notePlaying: state.notesPlaying.filter(
+              notePlaying => notePlaying !== note
+            )
+          });
+        }
+      }
+    };
 
     return (
         <Fragment>
